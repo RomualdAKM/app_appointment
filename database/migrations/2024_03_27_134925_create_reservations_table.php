@@ -15,11 +15,10 @@ return new class extends Migration
     {
         Schema::create('reservations', function (Blueprint $table) {
             $table->id();
-            $table->string('email')->nullable();
-            $table->string('phone')->nullable();
             $table->string('date')->nullable();
             $table->string('hours')->nullable();
             $table->string('number_of_people')->nullable();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }

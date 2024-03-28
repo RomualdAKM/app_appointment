@@ -2,8 +2,10 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\MaxPlace;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class DatabaseSeeder extends Seeder
 {
@@ -14,6 +16,18 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // \App\Models\User::factory(10)->create();
+        \App\Models\User::factory()->create([
+           
+            'name' => 'Admin',     
+            'email' => 'admin@gmail.com',
+            'role' => 'admin',
+            'password' => Hash::make('motdepasse'),
+        
+        ]);
+        MaxPlace::factory()->create([
+           
+            'number' => '7',     
+        
+        ]);
     }
 }

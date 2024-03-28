@@ -1,12 +1,13 @@
 <script setup>
+     import Footer from "./component/footer.vue"
      import { ref,onMounted,computed  } from "vue";
  
      const form = ref({
-         email: "",
-         phone: "",
+    
          date: "",
          hours: "",
          number_of_people: 1,
+         
      });
  
      const users = ref({
@@ -52,8 +53,11 @@
      const goBack = () => {
          summaryVisible.value = false;
      };
+
+    const isLoading = ref(false);
  
      const validateForm = async () => {
+        isLoading.value = true; // Activation du chargement
         const dataToSend = {
             form: form.value,
             users: users.value.people,
@@ -62,20 +66,39 @@
             await axios.post("/api/save_reservation", dataToSend).then((response) => {
 
                 if (response.data.success) {
+                    isLoading.value = false; // Désactivation du chargement en cas d'erreur
                     window.location.reload();
                     toast.fire({
                     icon: "success",
                     title: "Reservation prise en compte  avec succé",
                 });
                 } else {
+                    isLoading.value = false; // Désactivation du chargement en cas d'erreur
                 console.log('error',response.data.message)
                 toast.fire({
                     icon: "error",
                     title: "!!!! Remplissez tout les champs requis et assurez vous que les passwords correspondent",
                 });
                 }
-            });
-     };
+            }).catch((error) => {
+        isLoading.value = false; // Désactivation du chargement en cas d'erreur
+        console.error('Error saving course:', error);
+        toast.fire({
+            icon: "error",
+            title: "Une erreur s'est produite lors de la sauvegarde du cours. Veuillez réessayer plus tard.",
+        });
+    });
+};
+
+// Propriété calculée pour vérifier si le bouton "Suivant" doit être désactivé
+const isNextButtonDisabled = computed(() => {
+        // Vérifier si les champs obligatoires sont remplis
+        if (!form.value.date || !form.value.hours || !users.value.people.every(person => person.trim())) {
+            return true; // Désactiver le bouton si un champ est vide
+        } else {
+            return false; // Activer le bouton si tous les champs sont remplis
+        }
+    });
 
 
 onMounted( async () =>{
@@ -96,10 +119,9 @@ onMounted( async () =>{
              <div class="col-lg-6">
                  <h1 class="text-white">Bienvenue sur Pulpo Azul</h1>
                  <p class="text-white mb-3">Plonger dans les eaux scintillantes de la Méditerranée est une expérience inoubliable, mais pour de nombreux enfants, cette rencontre magique avec la mer reste un rêve lointain. Une association s'efforce de réaliser ce rêve en offrant aux jeunes explorateurs la chance de découvrir la mer et d'apprécier sa beauté. En soutenant cette cause, vous permettez aux enfants d'apprendre, de grandir et de se connecter avec l'environnement marin, tout en les sensibilisant à la préservation de la Méditerranée pour les générations futures. Chaque don contribue à leur éducation et les rapproche de l'expérience enrichissante de découvrir et de protéger la mer Méditerranée. Votre soutien est crucial pour aider ces jeunes à aimer, respecter et protéger notre précieuse Méditerranée</p>
-                 <a href="#" class="btn btn-white mb-0">Prendre Rendez-Vous<i class="bi bi-arrow-right ms-2"></i></a>
+                 <a href="#" class="btn btn-white mb-0">Prendre rendez-vous<i class="bi bi-arrow-right ms-2"></i></a>
              </div>
  
-         
              <div class="col-lg-6 col-xl-6 mb-n9">
                  <div class="card card-body shadow p-4 p-sm-5">
                      
@@ -109,15 +131,17 @@ onMounted( async () =>{
                      <div v-if="summaryVisible" class="mb-4">
                          <h3 class="mb-3">Récapitulatif des informations :</h3>
                          <ul class="list-group">
-                             <li class="list-group-item">Email : {{ form.email }}</li>
-                             <li class="list-group-item">Numéro : {{ form.phone }}</li>
+                            
                              <li class="list-group-item" v-for="(person, index) in users.people" :key="index">Personne {{ index + 1 }} : {{ person }}</li>
                              <li class="list-group-item">Date : {{ form.date }}</li>
                              <li class="list-group-item">Heure : {{ form.hours }}</li>
                          </ul>
                          <div class="d-grid mt-4">
                              <button @click="goBack" class="btn btn-secondary">Retour au formulaire</button>
-                             <button @click="validateForm" class="btn btn-primary">Valider</button>
+                             <div v-if="isLoading" class="spinner-border text-primary" role="status">
+                                <span class="sr-only">Loading...</span>
+                            </div>
+                             <button v-else @click="validateForm" class="btn btn-primary">Valider</button>
                          </div>
                      </div>
  
@@ -142,17 +166,6 @@ onMounted( async () =>{
                             <p>Il reste {{ reamining_seats }} place(s) pour la date et l'heure sélectionnées.</p>
                         </div>
 
-                         <div class="mb-3">
-                             <label class="form-label">Email</label>
-                             <input type="email" v-model="form.email" class="form-control" :disabled="reamining_seats <= 0">
-                         </div>
- 
-                         <div class="mb-3">
-                             <label class="form-label">Numero</label>
-                             <input type="tel" class="form-control" v-model="form.phone" :disabled="reamining_seats <= 0">
-                         </div>
- 
- 
                          <div  v-for="(person, index) in users.people" :key="index">
                              <label class="form-label mt-2">Personne {{ index + 1 }}</label>
                              <div class="input-group ">
@@ -163,7 +176,7 @@ onMounted( async () =>{
  
                          <button class="btn btn-primary mt-2 mb-4" type="button" @click="addPerson" :disabled="reamining_seats <= 0 || reamining_seats <= form.number_of_people">Ajouter nouvelle personne+ </button>                
                                              
-                         <div class="d-grid"><button @click.prevent="showSummary" class="btn btn-dark mb-0">Suivant</button></div>
+                         <div class="d-grid"><button @click.prevent="showSummary" class="btn btn-dark mb-0" :disabled="isNextButtonDisabled">Suivant</button></div>
  
                      </form>
                      <!-- Form END -->
@@ -172,7 +185,8 @@ onMounted( async () =>{
  
          </div> <!-- Row END -->
      </div>
-     </section>
+    </section>
+    <Footer />
  </template>
  
  
