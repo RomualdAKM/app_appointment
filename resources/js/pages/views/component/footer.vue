@@ -1,3 +1,32 @@
+<script setup>
+
+import { ref,watchEffect,computed,onMounted  } from 'vue'; 
+import { useLocation } from '../../store/pinia';
+
+const getLang = useLocation();
+const translations = ref({});
+
+// Charger les traductions en fonction de la langue sélectionnée
+watchEffect(() => {
+	const lang = getLang.useLang;
+	if (lang) {
+		import(`../../../locales/${lang}.json`)
+			.then(module => {
+				translations.value = module.default.messages;
+				console.log('translations',translations.value)
+			})
+			.catch(error => {
+				console.error('Error importing translation module:', error);
+			});
+	}
+});
+
+const translatedContent = computed(() => {
+	return translations.value;
+});
+
+</script>
+
 <template>
     <!-- =======================
 Footer START -->
@@ -13,7 +42,7 @@ Footer START -->
 			<!-- Widget -->
 			<div class="col-md-4 mb-3 mb-md-0">
 				<div class="text-center text-white text-primary-hover">
-					<router-link to="/login_admin">Copyrights</router-link>  ©2024 Pulpo Azul. Faire par <a href="https://vibecro-corp.tech/" target="_blank" class="text-white">vibecro-corp</a>.
+					<router-link to="/login_admin">{{ translatedContent['footer-text1'] }}</router-link>  ©2024 Pulpo Azul. {{ translatedContent['footer-text2'] }} <a href="https://vibecro-corp.tech/" target="_blank" class="text-white">vibecro-corp</a>.
 				</div>
 			</div>
 			<!-- Widget -->

@@ -1,7 +1,7 @@
 // require('./bootstrap');
 import './bootstrap';
 import { createApp } from 'vue'
-// import { createPinia } from 'pinia'
+import { createPinia } from 'pinia'
 import app from './pages/app.vue'
 import router from './router/index'
 import Swal from 'sweetalert2/dist/sweetalert2.js'
@@ -18,6 +18,6 @@ const toast = Swal.mixin({
 
 window.toast = toast
 
-// const pinia = createPinia()
-// createApp(app).use(pinia).use(router).mount('#app')
-createApp(app).use(router).mount('#app')
+ const pinia = createPinia()
+ createApp(app).use(pinia).use(router).mount('#app')
+//createApp(app).use(router).mount('#app')

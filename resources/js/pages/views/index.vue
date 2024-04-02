@@ -1,6 +1,31 @@
 <script setup>
      import Footer from "./component/footer.vue"
-     import { ref,onMounted,computed  } from "vue";
+     import Translate from './translate.vue';
+
+    import { ref,watchEffect,computed,onMounted  } from 'vue'; 
+    import { useLocation } from './../store/pinia';
+
+    const getLang = useLocation();
+    const translations = ref({});
+
+    // Charger les traductions en fonction de la langue sélectionnée
+    watchEffect(() => {
+        const lang = getLang.useLang;
+        if (lang) {
+            import(`../../locales/${lang}.json`)
+                .then(module => {
+                    translations.value = module.default.messages;
+                    console.log('translations',translations.value)
+                })
+                .catch(error => {
+                    console.error('Error importing translation module:', error);
+                });
+        }
+    });
+
+    const translatedContent = computed(() => {
+        return translations.value;
+    });
  
      const form = ref({
     
@@ -117,31 +142,31 @@ onMounted( async () =>{
          <div class="row g-4 justify-content-between align-items-center">
          
              <div class="col-lg-6">
-                 <h1 class="text-white">Bienvenue sur Pulpo Azul</h1>
-                 <p class="text-white mb-3">Plonger dans les eaux scintillantes de la Méditerranée est une expérience inoubliable, mais pour de nombreux enfants, cette rencontre magique avec la mer reste un rêve lointain. Une association s'efforce de réaliser ce rêve en offrant aux jeunes explorateurs la chance de découvrir la mer et d'apprécier sa beauté. En soutenant cette cause, vous permettez aux enfants d'apprendre, de grandir et de se connecter avec l'environnement marin, tout en les sensibilisant à la préservation de la Méditerranée pour les générations futures. Chaque don contribue à leur éducation et les rapproche de l'expérience enrichissante de découvrir et de protéger la mer Méditerranée. Votre soutien est crucial pour aider ces jeunes à aimer, respecter et protéger notre précieuse Méditerranée</p>
-                 <a href="#" class="btn btn-white mb-0">Prendre rendez-vous<i class="bi bi-arrow-right ms-2"></i></a>
+                 <h1 class="text-white">{{ translatedContent['banner-title'] }}</h1>
+                 <p class="text-white mb-3">{{ translatedContent['banner-text'] }}</p>
+                 <a href="#" class="btn btn-white mb-0">{{ translatedContent['banner-button'] }}<i class="bi bi-arrow-right ms-2"></i></a>
              </div>
  
              <div class="col-lg-6 col-xl-6 mb-n9">
                  <div class="card card-body shadow p-4 p-sm-5">
                      
-                     <h2 class="mb-0 h3">Planifiez votre rendez-vous en toute sécurité </h2>
+                     <h2 class="mb-0 h3">{{ translatedContent['form-title'] }} </h2>
  
                      <!-- Récapitulatif des informations -->
                      <div v-if="summaryVisible" class="mb-4">
-                         <h3 class="mb-3">Récapitulatif des informations :</h3>
+                         <h3 class="mb-3">{{ translatedContent['result-title'] }} :</h3>
                          <ul class="list-group">
                             
-                             <li class="list-group-item" v-for="(person, index) in users.people" :key="index">Personne {{ index + 1 }} : {{ person }}</li>
-                             <li class="list-group-item">Date : {{ form.date }}</li>
-                             <li class="list-group-item">Heure : {{ form.hours }}</li>
+                             <li class="list-group-item" v-for="(person, index) in users.people" :key="index">{{ translatedContent['form-label3'] }} {{ index + 1 }} : {{ person }}</li>
+                             <li class="list-group-item">{{ translatedContent['form-label1'] }} : {{ form.date }}</li>
+                             <li class="list-group-item">{{ translatedContent['form-label2'] }} : {{ form.hours }}</li>
                          </ul>
                          <div class="d-grid mt-4">
-                             <button @click="goBack" class="btn btn-secondary">Retour au formulaire</button>
+                             <button @click="goBack" class="btn btn-secondary">{{ translatedContent['result-button-back'] }}</button>
                              <div v-if="isLoading" class="spinner-border text-primary" role="status">
                                 <span class="sr-only">Loading...</span>
                             </div>
-                             <button v-else @click="validateForm" class="btn btn-primary">Valider</button>
+                             <button v-else @click="validateForm" class="btn btn-primary">{{ translatedContent['result-button-submit'] }}</button>
                          </div>
                      </div>
  
@@ -149,12 +174,12 @@ onMounted( async () =>{
                      <form v-else class="mt-3 mt-sm-4 text-start">             
 
                          <div class="mb-3">
-                             <label class="form-label">Date</label>
+                             <label class="form-label">{{ translatedContent['form-label1'] }}</label>
                              <input class="form-control" type="date" v-model="form.date" @change="getRemainingSeats()">
                          </div>
 
                          <div class="mb-3">
-                             <label class="form-label">Heure</label>
+                             <label class="form-label">{{ translatedContent['form-label2'] }}</label>
                              <select class="form-control" v-model="form.hours" @change="getRemainingSeats()">
                                  <option value="9h-13h">9h-13h</option>
                                  <option value="14h-15h">14h-15h</option>
@@ -163,20 +188,20 @@ onMounted( async () =>{
 
                         
                         <div v-if="reamining_seats !== ''" class="mb-3">
-                            <p>Il reste {{ reamining_seats }} place(s) pour la date et l'heure sélectionnées.</p>
+                            <p>{{ translatedContent['form-message-error1'] }} {{ reamining_seats }} {{ translatedContent['form-message-error2'] }}.</p>
                         </div>
 
                          <div  v-for="(person, index) in users.people" :key="index">
-                             <label class="form-label mt-2">Personne {{ index + 1 }}</label>
+                             <label class="form-label mt-2">{{ translatedContent['form-label3'] }} {{ index + 1 }}</label>
                              <div class="input-group ">
-                                 <input class="form-control" v-model="users.people[index]" type="text" placeholder="nom complet" :disabled="reamining_seats <= 0">
+                                 <input class="form-control" v-model="users.people[index]" type="text" :placeholder="translatedContent['form-placeholder']"  :disabled="reamining_seats <= 0">
                                  <button class="btn btn-danger" type="button" @click="removePerson(index)" v-if="users.people.length > 1">-</button>
                              </div>
                          </div>
  
-                         <button class="btn btn-primary mt-2 mb-4" type="button" @click="addPerson" :disabled="reamining_seats <= 0 || reamining_seats <= form.number_of_people">Ajouter nouvelle personne+ </button>                
+                         <button class="btn btn-primary mt-2 mb-4" type="button" @click="addPerson" :disabled="reamining_seats <= 0 || reamining_seats <= form.number_of_people">{{ translatedContent['form-button-add-person'] }} + </button>                
                                              
-                         <div class="d-grid"><button @click.prevent="showSummary" class="btn btn-dark mb-0" :disabled="isNextButtonDisabled">Suivant</button></div>
+                         <div class="d-grid"><button @click.prevent="showSummary" class="btn btn-dark mb-0" :disabled="isNextButtonDisabled">{{ translatedContent['form-button-next'] }}</button></div>
  
                      </form>
                      <!-- Form END -->
@@ -186,6 +211,7 @@ onMounted( async () =>{
          </div> <!-- Row END -->
      </div>
     </section>
+    <Translate />
     <Footer />
  </template>
  
