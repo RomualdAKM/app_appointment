@@ -1,7 +1,30 @@
 <script setup>
-
-import { reactive, ref } from "vue";
 import router from "./../../router/index.js"
+import { reactive,watchEffect,computed,onMounted,ref  } from 'vue'; 
+import { useLocation } from './../store/pinia';
+import Translate from './translate.vue';
+
+const getLang = useLocation();
+const translations = ref({});
+
+// Charger les traductions en fonction de la langue sélectionnée
+watchEffect(() => {
+	const lang = getLang.useLang;
+	if (lang) {
+		import(`./../../locales/${lang}.json`)
+			.then(module => {
+				translations.value = module.default.messages;
+				console.log('translations',translations.value)
+			})
+			.catch(error => {
+				console.error('Error importing translation module:', error);
+			});
+	}
+});
+
+const translatedContent = computed(() => {
+	return translations.value;
+});
 
 let form = reactive({
     email: "",
@@ -57,44 +80,44 @@ const login = async () => {
 						<div class="col-sm-10 col-xl-8 m-auto">
 							<!-- Title -->
 							<span class="mb-0 fs-1">👋</span>
-							<h1 class="fs-2">Connexion</h1>
+							<h1 class="fs-2">{{ translatedContent['login-title'] }}</h1>
 						
 
 							<!-- Form START -->
 							<form>
 								<!-- Email -->
 								<div class="mb-4">
-									<label for="exampleInputEmail1" class="form-label">Email </label>
+									<label for="exampleInputEmail1" class="form-label">{{ translatedContent['login-label1'] }} </label>
 									<div class="input-group input-group-lg">
 										<span class="input-group-text bg-light rounded-start border-0 text-secondary px-3"><i class="bi bi-envelope-fill"></i></span>
-										<input v-model="form.email" type="email" class="form-control border-0 bg-light rounded-end ps-1" placeholder="E-mail" id="exampleInputEmail1">
+										<input v-model="form.email" type="email" class="form-control border-0 bg-light rounded-end ps-1"  id="exampleInputEmail1">
 									</div>
 								</div>
 								<!-- Password -->
 								<div class="mb-4">
-									<label for="inputPassword5" class="form-label">Mot de passe </label>
+									<label for="inputPassword5" class="form-label">{{ translatedContent['login-label2'] }} </label>
 									<div class="input-group input-group-lg">
 										<span class="input-group-text bg-light rounded-start border-0 text-secondary px-3"><i class="fas fa-lock"></i></span>
-										<input v-model="form.password" type="password" class="form-control border-0 bg-light rounded-end ps-1" placeholder="password" id="inputPassword5">
+										<input v-model="form.password" type="password" class="form-control border-0 bg-light rounded-end ps-1"  id="inputPassword5">
 									</div>
 									
 								</div>
 								<!-- Check box -->
-								<div class="mb-4 d-flex justify-content-between mb-4">
+								<!-- <div class="mb-4 d-flex justify-content-between mb-4">
 									<div class="form-check">
 										<input type="checkbox" class="form-check-input" id="exampleCheck1">
 										<label class="form-check-label" for="exampleCheck1">Remember me</label>
 									</div>
-									<!-- <div class="text-primary-hover">
+									<div class="text-primary-hover">
 										<a href="forgot-password.html" class="text-secondary">
 											<u>Forgot password?</u>
 										</a>
-									</div> -->
-								</div>
+									</div>
+								</div> -->
 								<!-- Button -->
 								<div class="align-items-center mt-0">
 									<div class="d-grid">
-										<button class="btn btn-primary mb-0" type="button" @click="login()">Login</button>
+										<button class="btn btn-primary mb-0" type="button" @click="login()">{{ translatedContent['login-button'] }}</button>
 									</div>
 								</div>
 							</form>
@@ -103,7 +126,7 @@ const login = async () => {
 							
 							<!-- Sign up link -->
 							<div class="mt-4 text-center">
-								<span>Vous n'aviez pas un compte? <router-link to="/register">Inscription</router-link></span>
+								<span>{{ translatedContent['login-question'] }} <router-link to="/register">{{ translatedContent['login-link'] }}</router-link></span>
 							</div>
 						</div>
 					</div> <!-- Row END -->
@@ -113,4 +136,6 @@ const login = async () => {
 	</section>
 </main>
 <!-- **************** MAIN CONTENT END **************** -->
+<Translate />
+
 </template>

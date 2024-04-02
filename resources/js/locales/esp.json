@@ -19,7 +19,25 @@
         "result-button-submit": "Validar",
 
         "footer-text1": "Derechos de autor",
-        "footer-text2": "Hacer por"
+        "footer-text2": "Hacer por",
+
+        "login-title": "Conexión",
+        "login-label1": "Correo electrónico",
+        "login-label2": "Contraseña",
+        "login-button": "Acceso",
+        "login-question": "¿No tenías una cuenta?",
+        "login-link": "Registro",
+
+        "register-welcome-text": "Bienvenidos a Pulpo Azul",
+        "register-title": "Crea tu cuenta",
+        "register-label1": "Nombre completo",
+        "register-label2": "Dirección de correo electrónico",
+        "register-label3": "Número de teléfono",
+        "register-label4": "Contraseña",
+        "register-label5": "confirmar Contraseña",
+        "register-button": "Validar",
+        "register-question": "¿Tenías una cuenta?",
+        "register-link": "Conexión"
 
     }
 }

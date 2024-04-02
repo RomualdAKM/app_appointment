@@ -1,6 +1,31 @@
 <script setup>
-import { reactive, ref, onMounted } from "vue";
 import router from "./../../router/index.js"
+import { reactive,watchEffect,computed,onMounted,ref  } from 'vue'; 
+import { useLocation } from './../store/pinia';
+import Translate from './translate.vue';
+
+
+const getLang = useLocation();
+const translations = ref({});
+
+// Charger les traductions en fonction de la langue sélectionnée
+watchEffect(() => {
+	const lang = getLang.useLang;
+	if (lang) {
+		import(`./../../locales/${lang}.json`)
+			.then(module => {
+				translations.value = module.default.messages;
+				console.log('translations',translations.value)
+			})
+			.catch(error => {
+				console.error('Error importing translation module:', error);
+			});
+	}
+});
+
+const translatedContent = computed(() => {
+	return translations.value;
+});
 
 let form = reactive({
     name: "",
@@ -46,7 +71,7 @@ const register = async () => {
 					<div class="p-3 p-lg-5">
 						<!-- Title -->
 						<div class="text-center">
-							<h2 class="fw-bold">Bienvenue sur Pulpo Azul</h2>
+							<h2 class="fw-bold">{{ translatedContent['register-welcome-text'] }}</h2>
 							
 						</div>
 						<!-- SVG Image -->
@@ -61,28 +86,28 @@ const register = async () => {
 						<div class="col-sm-10 col-xl-8 m-auto">
 							<!-- Title -->
 							<img src="/logo_pulpo.png" class="h-40px mb-2" alt="">
-							<h2>Créer votre compte</h2>
+							<h2>{{ translatedContent['register-title'] }}</h2>
 				
 						
 							<!-- Form START -->
 							<form>
 								<!-- Email -->
 								<div class="mb-4">
-									<label for="exampleInputEmail1" class="form-label">Nom Complet </label>
+									<label for="exampleInputEmail1" class="form-label">{{ translatedContent['register-label1'] }} </label>
 									<div class="input-group input-group-lg">
 										<!-- <span class="input-group-text bg-light rounded-start border-0 text-secondary px-3"><i class="bi bi-envelope-fill"></i></span> -->
 										<input type="text" v-model="form.name" class="form-control border-0 bg-light rounded-end ps-1" id="exampleInputEmail1">
 									</div>
 								</div>
 								<div class="mb-4">
-									<label for="exampleInputEmail1" class="form-label">Email address</label>
+									<label for="exampleInputEmail1" class="form-label">{{ translatedContent['register-label2'] }}</label>
 									<div class="input-group input-group-lg">
 										<span class="input-group-text bg-light rounded-start border-0 text-secondary px-3"><i class="bi bi-envelope-fill"></i></span>
 										<input type="email" v-model="form.email" class="form-control border-0 bg-light rounded-end ps-1"  id="exampleInputEmail1">
 									</div>
 								</div>
 								<div class="mb-4">
-									<label for="exampleInputEmail1" class="form-label">Numero de telephone</label>
+									<label for="exampleInputEmail1" class="form-label">{{ translatedContent['register-label3'] }}</label>
 									<div class="input-group input-group-lg">
 										<!-- <span class="input-group-text bg-light rounded-start border-0 text-secondary px-3"><i class="bi bi-envelope-fill"></i></span> -->
 										<input type="tel" v-model="form.number" class="form-control border-0 bg-light rounded-end ps-1"  id="exampleInputEmail1">
@@ -90,7 +115,7 @@ const register = async () => {
 								</div>
 								<!-- Password -->
 								<div class="mb-4">
-									<label for="inputPassword5" class="form-label">Password *</label>
+									<label for="inputPassword5" class="form-label">{{ translatedContent['register-label4'] }}</label>
 									<div class="input-group input-group-lg">
 										<span class="input-group-text bg-light rounded-start border-0 text-secondary px-3"><i class="fas fa-lock"></i></span>
 										<input type="password" v-model="form.password" class="form-control border-0 bg-light rounded-end ps-1" placeholder="*********" id="inputPassword5">
@@ -98,7 +123,7 @@ const register = async () => {
 								</div>
 								<!-- Confirm Password -->
 								<div class="mb-4">
-									<label for="inputPassword6" class="form-label">Confirm Password *</label>
+									<label for="inputPassword6" class="form-label">{{ translatedContent['register-label5'] }}</label>
 									<div class="input-group input-group-lg">
 										<span class="input-group-text bg-light rounded-start border-0 text-secondary px-3"><i class="fas fa-lock"></i></span>
 										<input type="password" v-model="form.c_password" class="form-control border-0 bg-light rounded-end ps-1" placeholder="*********" id="inputPassword6">
@@ -108,7 +133,7 @@ const register = async () => {
 								<!-- Button -->
 								<div class="align-items-center mt-0">
 									<div class="d-grid">
-										<button class="btn btn-primary mb-0" @click="register()" type="button">Valider</button>
+										<button class="btn btn-primary mb-0" @click="register()" type="button">{{ translatedContent['register-button'] }}</button>
 									</div>
 								</div>
 							</form>
@@ -116,7 +141,7 @@ const register = async () => {
 
 							<!-- Sign up link -->
 							<div class="mt-4 text-center">
-								<span>Vous aviez un compte?<router-link to="/login"> Connexion</router-link></span>
+								<span>{{ translatedContent['register-question'] }}<router-link to="/login"> {{ translatedContent['register-link'] }}</router-link></span>
 							</div>
 						</div>
 					</div>
@@ -126,5 +151,5 @@ const register = async () => {
 	</section>
 </main>
 <!-- **************** MAIN CONTENT END **************** -->
-
+<Translate />
 </template>

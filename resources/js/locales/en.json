@@ -19,7 +19,26 @@
     "result-button-submit": "Submit",
 
     "footer-text1": "Copyrights",
-    "footer-text2": "Do by"
+    "footer-text2": "Do by",
+
+    "login-title": "Login",
+    "login-label1": "Email",
+    "login-label2": "Password",
+    "login-button": "Log in",
+    "login-question": "Don't have an account?",
+    "login-link": "Sign up",
+
+    "register-welcome-text": "Welcome to Pulpo Azul",
+    "register-title": "Create Your Account",
+    "register-label1": "Full Name",
+    "register-label2": "Email Address",
+    "register-label3": "Phone Number",
+    "register-label4": "Password",
+    "register-label5": "Confirm Password",
+    "register-button": "Save",
+    "register-question": "Already have an account?",
+    "register-link": "Login"
+
 
     }
 }
