@@ -4,7 +4,7 @@ return [
     'name' => 'Pulpo-Azul',
     'manifest' => [
         'name' => env('APP_NAME', 'Pulpo-Azul'),
-        'short_name' => 'PWA',
+        'short_name' => 'Pulpo-Azul',
         'start_url' => '/',
         'background_color' => '#ffffff',
         'theme_color' => '#000000',

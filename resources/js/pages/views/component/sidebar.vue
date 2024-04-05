@@ -36,6 +36,7 @@ const logout = () => {
             <li class="nav-item"><router-link class="nav-link" to="/reservations" ><i class="far fa-clipboard fa-fw me-2" ></i>Listes des reservations</router-link></li>
             <li class="nav-item"><router-link class="nav-link" to="/daysoff" ><i class="far fa-clipboard fa-fw me-2" ></i>Temps de repos</router-link></li>
             <li class="nav-item"><router-link class="nav-link" to="/maxplace" ><i class="far fa-clipboard fa-fw me-2" ></i>Nombre de place max</router-link></li>
+            <li class="nav-item"><router-link class="nav-link" to="/profil" ><i class="far fa-clipboard fa-fw me-2" ></i>Editer profil</router-link></li>
           
           </ul>
         <!-- Sidebar menu end -->

@@ -112,4 +112,54 @@ class AuthController extends Controller
             }
                 
         }
+
+        public function get_auth_user(){
+
+            $user = Auth::user();
+
+            return $user;
+
+        }
+
+        public function edit_profil(Request $request){
+
+            $validator = Validator::make($request->all(),[
+                'name' => 'required',
+                'email' => 'required|email',
+                // 'password' => 'required',
+                // 'c_password' => 'required|same:password'
+              ]);
+        
+                if($validator->fails() || $request->password != $request->c_password){
+                    $response = [
+                        'success' => false,
+                        'message' => $validator->errors()
+                    ];
+                    return response()->json(
+                        $response,200
+                    );
+                }
+
+                // $input = $request->all();
+                // $input['password'] = bcrypt($input['password']);
+        
+                $user_id = Auth::user()->id;
+        
+                $user = User::find( $user_id);
+                $user->name = $request->name;
+                $user->email = $request->email;
+                $user->password = bcrypt($request->password);
+                $user->save();
+        
+                $response = [
+                    'success' => true,
+                    'message' => "successfully"
+                ];
+                return response()->json(
+                    $response,
+                    200
+                );
+        }
+
+
 }

@@ -6,6 +6,7 @@ import login_admin from '../pages/views/login_admin.vue'
 import reservations from '../pages/views/admin/reservations.vue'
 import daysoff from '../pages/views/admin/daysoff.vue'
 import maxplace from '../pages/views/admin/maxplace.vue'
+import profil from '../pages/views/admin/profil.vue'
 import notFound from '../pages/notFound.vue'
 
 const routes = [
@@ -41,6 +42,15 @@ const routes = [
         name: 'maxplace',
         path: '/maxplace',
         component: maxplace,
+         meta: {
+            requiresAuth: true
+        }
+        
+    },
+    {   
+        name: 'profil',
+        path: '/profil',
+        component: profil,
          meta: {
             requiresAuth: true
         }

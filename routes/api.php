@@ -25,7 +25,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::controller(AuthController::class)->group(function(){
     Route::post('register','register');
     Route::post('login','login');
+    Route::post('edit_profil','edit_profil');
     Route::post('login_admin','login_admin');
+    Route::get('get_auth_user','get_auth_user');
 });
 
 Route::controller(ReservationController::class)->group(function(){
